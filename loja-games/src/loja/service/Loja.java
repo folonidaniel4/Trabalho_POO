@@ -3,6 +3,7 @@ package loja.service;
 import loja.exception.ProdutoNaoEncontradoException;
 import loja.model.Produto;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,7 +11,9 @@ import java.util.List;
  * Representa o catálogo da loja online e as operações de gerenciamento
  * de produtos (cadastro e busca).
  */
-public class Loja {
+public class Loja implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     private final String nomeLoja;
     private final List<Produto> catalogo = new ArrayList<>();
@@ -19,7 +22,7 @@ public class Loja {
         this.nomeLoja = nomeLoja;
     }
 
-    public void cadastrarProduto(Produto produto) {
+    public synchronized void cadastrarProduto(Produto produto) {
         catalogo.add(produto);
     }
 
