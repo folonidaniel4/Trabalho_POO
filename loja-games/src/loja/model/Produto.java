@@ -2,13 +2,17 @@ package loja.model;
 
 import loja.exception.EstoqueInsuficienteException;
 
+import java.io.Serializable;
+
 /**
  * Classe abstrata que representa um produto genérico da loja de games.
  * Concentra os atributos e comportamentos comuns a todos os tipos de produto,
  * deixando para as subclasses a responsabilidade de definir como o preço
  * final é calculado e qual é a categoria do produto (polimorfismo).
  */
-public abstract class Produto {
+public abstract class Produto implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     private final String id;
     private final String nome;
@@ -38,7 +42,7 @@ public abstract class Produto {
 
     // ---- Comportamentos comuns ----
 
-    public void removerEstoque(int quantidade) throws EstoqueInsuficienteException {
+    public synchronized void removerEstoque(int quantidade) throws EstoqueInsuficienteException {
         if (quantidade <= 0) {
             throw new IllegalArgumentException("A quantidade a remover deve ser maior que zero.");
         }
@@ -50,7 +54,7 @@ public abstract class Produto {
         this.quantidadeEstoque -= quantidade;
     }
 
-    public void adicionarEstoque(int quantidade) {
+    public synchronized void adicionarEstoque(int quantidade) {
         if (quantidade <= 0) {
             throw new IllegalArgumentException("A quantidade a adicionar deve ser maior que zero.");
         }

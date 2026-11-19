@@ -41,8 +41,19 @@ public class Carrinho {
         if (itens.isEmpty()) {
             throw new PedidoInvalidoException("Não é possível finalizar um pedido com o carrinho vazio.");
         }
-        for (Map.Entry<Produto, Integer> entry : itens.entrySet()) {
-            entry.getKey().removerEstoque(entry.getValue());
+        // guarda os itens que já tiveram baixa, para poder desfazer se algum falhar
+        Map<Produto, Integer> baixados = new LinkedHashMap<>();
+        try {
+            for (Map.Entry<Produto, Integer> entry : itens.entrySet()) {
+                entry.getKey().removerEstoque(entry.getValue());
+                baixados.put(entry.getKey(), entry.getValue());
+            }
+        } catch (EstoqueInsuficienteException e) {
+            // desfaz as baixas já feitas: o pedido é "tudo ou nada"
+            for (Map.Entry<Produto, Integer> entry : baixados.entrySet()) {
+                entry.getKey().adicionarEstoque(entry.getValue());
+            }
+            throw e;
         }
     }
 
